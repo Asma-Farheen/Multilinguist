@@ -26,6 +26,21 @@
   <!-- Main Shell -->
   <div id="app-shell" style="opacity: 0;"></div>
 
+  <!-- Big Mic Button (Global so it stays through all screens) -->
+  <div class="mic-area">
+    <button class="mic-btn" id="mic-btn" aria-label="Tap to speak">
+      <div class="mic-pulse"></div>
+      <div class="mic-pulse delay-1"></div>
+      <svg class="mic-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="9" y="2" width="6" height="11" rx="3" fill="white"/>
+        <path d="M5 10C5 10 5 17 12 17C19 17 19 10 19 10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="17" x2="12" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="9" y1="21" x2="15" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="mic-label">మాట్లాడు</span>
+    </button>
+  </div>
+
   <!-- Built-In Splash (Show while loading happens) -->
   <div id="loading-overlay" style="position:fixed; inset:0; background:linear-gradient(160deg, #FF6B2C, #FFB347); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; color:white; transition: opacity 0.5s ease;">
     <div style="font-size: 5rem; animation: float 2s infinite;">🌿</div>
