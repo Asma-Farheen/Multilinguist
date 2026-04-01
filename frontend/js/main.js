@@ -1,11 +1,86 @@
 'use strict';
 
 // ============================================================
-// MAIN INITIATION (Setting up Buttons & Core Logic)
+// GLOBAL EVENT DELEGATION (Bulletproof Listening)
 // ============================================================
 
+function bindGlobalEvents() {
+  console.log('🔗 Attaching Global Event Listeners...');
+
+  document.addEventListener('click', (e) => {
+    // 1. Microphone Toggle
+    const micBtn = e.target.closest('#mic-btn');
+    if (micBtn) {
+      console.log('🎤 Mic Clicked');
+      if (state.isListening) {
+        stopListening();
+      } else {
+        startListening();
+      }
+      return;
+    }
+
+    // 2. Category Toggles
+    const catBtn = e.target.closest('.category-card');
+    if (catBtn) {
+      document.querySelectorAll('.category-card').forEach(b => b.classList.remove('active'));
+      catBtn.classList.add('active');
+      state.currentCategory = catBtn.dataset.category;
+      showToast(`Topic: ${state.currentCategory}`);
+      return;
+    }
+
+    // 3. Language Toggles
+    const langBtn = e.target.closest('.lang-btn');
+    if (langBtn) {
+      const code = langBtn.dataset.lang;
+      applyLanguage(code);
+      showToast(`${LANG_DATA[code].name} Selected`);
+      return;
+    }
+
+    // 4. Panel Controls
+    if (e.target.closest('#settings-btn')) openPanel('settings');
+    if (e.target.closest('#history-btn')) openPanel('history');
+    if (e.target.closest('.close-panel') || e.target.closest('.panel-overlay')) {
+       document.querySelectorAll('.panel').forEach(p => {
+         p.classList.remove('open');
+         setTimeout(() => p.classList.add('hidden'), 400);
+       });
+    }
+
+    // 5. Navigation & Replay
+    if (e.target.closest('#btn-home')) {
+      stopSpeaking();
+      showScreen('home');
+    }
+    if (e.target.closest('#btn-cancel')) {
+      stopListening();
+      showScreen('home');
+    }
+    if (e.target.closest('#btn-replay')) {
+      speakText(state.lastAnswer);
+    }
+    if (e.target.closest('#new-question-btn')) {
+      stopSpeaking();
+      showScreen('home');
+      setTimeout(startListening, 600);
+    }
+
+    // 6. Theme & Speed
+    if (e.target.closest('#theme-cycle')) {
+      const themes = ['warm', 'nature', 'sky'];
+      let idx = themes.indexOf(state.currentTheme || 'warm');
+      let next = themes[(idx + 1) % themes.length];
+      state.currentTheme = next;
+      applyTheme(next);
+      showToast(`Theme: ${next}`);
+    }
+  });
+}
+
 function init() {
-  bindEvents();
+  // Global handlers are attached ONCE at startup
   applyLanguage(CONFIG.language);
   applyTheme(CONFIG.theme);
   applySpeed(CONFIG.speechRate);
@@ -16,122 +91,18 @@ function init() {
   
   renderRecent();
   loadVoices();
-  setTimeout(loadVoices, 500); // Trigger again for Chrome bug
   
+  // Transition from splash
+  setTimeout(() => {
+    const splash = $('screen-splash');
+    if (splash) {
+      splash.classList.add('slide-out');
+      showScreen('home');
+    }
+  }, 2000);
+
   console.log('🌱 Grama AI Initialized');
 }
 
-function bindEvents() {
-  // Splash Screen transition
-  const splash = $('screen-splash');
-  if (splash) {
-    setTimeout(() => {
-      splash.classList.add('slide-out');
-      showScreen('home');
-    }, 2500);
-  }
-
-  // Settings Panel Actions
-  if ($('settings-btn')) $('settings-btn').addEventListener('click', () => openPanel('settings'));
-  if ($('history-btn')) $('history-btn').addEventListener('click', () => openPanel('history'));
-  
-  document.querySelectorAll('.close-panel').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.target.closest('.panel').classList.remove('open');
-      e.target.closest('.panel').classList.add('hidden');
-    });
-  });
-
-  // Settings: Backend URL
-  if ($('save-settings')) {
-    $('save-settings').addEventListener('click', () => {
-      const url = $('api-url').value.trim();
-      CONFIG.backendUrl = url;
-      localStorage.setItem('gramaBackendUrl', url);
-      showToast('Settings saved successfully!');
-      closePanel('settings');
-    });
-  }
-
-  // Microphone Main Button
-  const micBtn = $('mic-btn');
-  if (micBtn) {
-    micBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (state.isListening) {
-        stopListening();
-      } else {
-        startListening();
-      }
-    });
-
-    // We also support holding for those who prefer it
-    let holdTimer;
-    micBtn.addEventListener('mousedown', () => {
-      holdTimer = setTimeout(() => { /* Maybe add some haptic here later */ }, 400);
-    });
-    micBtn.addEventListener('mouseup', () => clearTimeout(holdTimer));
-  }
-
-  // Back Buttons
-  if ($('btn-home')) $('btn-home').addEventListener('click', () => {
-    stopSpeaking();
-    showScreen('home');
-  });
-  if ($('btn-cancel')) $('btn-cancel').addEventListener('click', () => {
-    stopListening();
-    showScreen('home');
-  });
-
-  // Replay Audio Response Button
-  if ($('btn-replay')) $('btn-replay').addEventListener('click', () => speakText(state.lastAnswer));
-
-  // Language Toggles
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const code = e.currentTarget.dataset.lang;
-      applyLanguage(code);
-      showToast(`${LANG_DATA[code].name} Selected`);
-    });
-  });
-
-  // Category Toggles
-  document.querySelectorAll('.category-card').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.category-card').forEach(b => b.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      state.currentCategory = e.currentTarget.dataset.category;
-      showToast(`Topic: ${state.currentCategory}`);
-    });
-  });
-
-  // Theme Toggles
-  let themeIndex = 0;
-  const themes = ['warm', 'nature', 'sky'];
-  if ($('theme-cycle')) {
-    $('theme-cycle').addEventListener('click', () => {
-      themeIndex = (themeIndex + 1) % themes.length;
-      applyTheme(themes[themeIndex]);
-      showToast(`Interface: ${themes[themeIndex]}`);
-    });
-  }
-
-  // Speed Toggles
-  document.querySelectorAll('.speed-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const p = parseFloat(e.currentTarget.dataset.speed);
-      applySpeed(p);
-      showToast(`Speech Speed: ${p}x`);
-    });
-  });
-
-  // Ask Again Button
-  if ($('new-question-btn')) {
-    $('new-question-btn').addEventListener('click', () => {
-      stopSpeaking();
-      showScreen('home');
-      setTimeout(startListening, 500);
-    });
-  }
-}
-
+// Attach global events immediately
+bindGlobalEvents();
