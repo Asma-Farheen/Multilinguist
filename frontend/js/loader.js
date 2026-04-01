@@ -36,6 +36,10 @@ async function loadComponents() {
     })
   );
 
+  // After all fragments are injected, prepare shell for display
+  appShell.style.opacity = '0';
+  appShell.style.transition = 'opacity 0.5s ease-in';
+  
   // Check for any failures
   results.forEach((res, i) => {
     if (res.status === 'rejected') {
@@ -46,6 +50,10 @@ async function loadComponents() {
   // After all fragments are injected, start the main app
   if (typeof init === 'function') {
     init();
+    // Fade in after init
+    requestAnimationFrame(() => {
+      appShell.style.opacity = '1';
+    });
   } else {
     console.warn('init function not found after loading components');
   }
