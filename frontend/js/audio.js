@@ -29,14 +29,19 @@ async function startListening() {
 
     mediaRecorder.start();
     state.isListening = true;
-    $('mic-btn').classList.add('listening');
-    $('interim-text').textContent = 'Speak in ANY language...';
+    
+    const mic = $('mic-btn');
+    if (mic) mic.classList.add('listening');
+    
+    const listenText = $('listening-text');
+    if (listenText) listenText.textContent = LANG_DATA[state.currentLang]?.listening || 'Listening...';
     
     // UI Change
     showScreen('listening');
   } catch (err) {
-    console.error('mic err:', err);
-    showToast('🎤 Voice not supported or mic denied.');
+    console.error('Mic capture error:', err.message);
+    showToast('🎤 Error: Microphone permission denied or unavailable.');
+    state.isListening = false;
     showScreen('home');
   }
 }
