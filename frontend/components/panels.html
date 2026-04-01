@@ -1,0 +1,52 @@
+<!-- ===== SETTINGS PANEL ===== -->
+<div id="settings-panel" class="panel hidden">
+  <div class="panel-overlay" id="settings-overlay"></div>
+  <div class="panel-sheet">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title">⚙️ Settings</h2>
+    
+    <div class="setting-row">
+      <span class="setting-icon">🔊</span>
+      <span class="setting-name">Speech Speed</span>
+      <div class="speed-btns">
+        <button class="speed-btn" data-speed="0.7">🐢 Slow</button>
+        <button class="speed-btn active" data-speed="1.0">Normal</button>
+        <button class="speed-btn" data-speed="1.4">🐇 Fast</button>
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-icon">🌐</span>
+      <span class="setting-name">Backend URL</span>
+      <input type="text" id="api-url" class="setting-input" placeholder="http://localhost:8000" />
+    </div>
+
+    <div class="setting-row">
+      <span class="setting-icon">🎨</span>
+      <span class="setting-name">Theme</span>
+      <div class="theme-btns">
+        <button class="theme-btn active" data-theme="warm">🌅 Warm</button>
+        <button class="theme-btn" data-theme="nature">🌿 Nature</button>
+        <button class="theme-btn" data-theme="sky">🌊 Sky</button>
+      </div>
+    </div>
+
+    <button class="close-panel-btn close-panel" id="save-settings">✓ Done</button>
+  </div>
+</div>
+
+<!-- ===== HISTORY PANEL ===== -->
+<div id="history-panel" class="panel hidden">
+  <div class="panel-overlay" id="history-overlay"></div>
+  <div class="panel-sheet">
+    <div class="panel-handle"></div>
+    <h2 class="panel-title">📋 History</h2>
+    <div class="history-list" id="history-list">
+      <!-- Filled by JS -->
+    </div>
+    <button class="close-panel-btn close-panel" id="close-history">✓ Close</button>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>

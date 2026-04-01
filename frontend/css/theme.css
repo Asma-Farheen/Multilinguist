@@ -1,0 +1,59 @@
+/* ---- CSS Variables / Design Tokens ---- */
+:root {
+  /* Warm theme (default) */
+  --primary:      #FF6B2C;
+  --primary-dark: #E0501A;
+  --primary-light:#FF8F5A;
+  --secondary:    #2ECC71;
+  --accent:       #F39C12;
+  --bg:           #FFF8F2;
+  --bg2:          #FFF0E6;
+  --surface:      #FFFFFF;
+  --surface2:     rgba(255,255,255,0.85);
+  --text:         #2C1810;
+  --text-muted:   #7A5C50;
+  --shadow:       rgba(255,107,44,0.18);
+  --shadow-dark:  rgba(0,0,0,0.15);
+  --radius-lg:    24px;
+  --radius-xl:    36px;
+  --radius-full:  9999px;
+  --mic-color:    #FF6B2C;
+  --mic-glow:     rgba(255,107,44,0.4);
+  --gradient-bg:  linear-gradient(160deg, #FFF8F2 0%, #FFE8D4 60%, #FFF0E6 100%);
+  --gradient-btn: linear-gradient(135deg, #FF6B2C, #FF8F5A);
+  --transition:   0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Nature Theme */
+body.theme-nature {
+  --primary:      #27AE60;
+  --primary-dark: #1E8449;
+  --primary-light:#52BE80;
+  --accent:       #F39C12;
+  --bg:           #F0FFF4;
+  --bg2:          #E8F8EE;
+  --text:         #1A3C2A;
+  --text-muted:   #4A7A5C;
+  --shadow:       rgba(39,174,96,0.18);
+  --mic-color:    #27AE60;
+  --mic-glow:     rgba(39,174,96,0.4);
+  --gradient-bg:  linear-gradient(160deg, #F0FFF4 0%, #D5F5E3 60%, #E8F8EE 100%);
+  --gradient-btn: linear-gradient(135deg, #27AE60, #52BE80);
+}
+
+/* Sky Theme */
+body.theme-sky {
+  --primary:      #2980B9;
+  --primary-dark: #1F618D;
+  --primary-light:#5DADE2;
+  --accent:       #E67E22;
+  --bg:           #EAF4FF;
+  --bg2:          #D6EEFF;
+  --text:         #1A2C3C;
+  --text-muted:   #4A6A8A;
+  --shadow:       rgba(41,128,185,0.18);
+  --mic-color:    #2980B9;
+  --mic-glow:     rgba(41,128,185,0.4);
+  --gradient-bg:  linear-gradient(160deg, #EAF4FF 0%, #C5E3FF 60%, #D6EEFF 100%);
+  --gradient-btn: linear-gradient(135deg, #2980B9, #5DADE2);
+}

@@ -1,0 +1,107 @@
+<!-- ===== HOME SCREEN ===== -->
+<div id="screen-home" class="screen">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <button class="icon-btn" id="btn-history" title="History" aria-label="View conversation history">
+      <span class="icon">📋</span>
+    </button>
+    <div class="app-name-mini">🌿 Grama AI</div>
+    <button class="icon-btn" id="btn-settings" title="Settings" aria-label="Open settings">
+      <span class="icon">⚙️</span>
+    </button>
+  </div>
+
+  <!-- Language Selector -->
+  <div class="language-strip" id="language-strip">
+    <button class="lang-btn active" data-lang="te-IN" data-name="Telugu" id="lang-te">
+      <span class="lang-emoji">🅣</span>
+      <span class="lang-label">తెలుగు</span>
+    </button>
+    <button class="lang-btn" data-lang="hi-IN" data-name="Hindi" id="lang-hi">
+      <span class="lang-emoji">🅗</span>
+      <span class="lang-label">हिंदी</span>
+    </button>
+    <button class="lang-btn" data-lang="ta-IN" data-name="Tamil" id="lang-ta">
+      <span class="lang-emoji">🅣</span>
+      <span class="lang-label">தமிழ்</span>
+    </button>
+    <button class="lang-btn" data-lang="kn-IN" data-name="Kannada" id="lang-kn">
+      <span class="lang-emoji">🅚</span>
+      <span class="lang-label">ಕನ್ನಡ</span>
+    </button>
+    <button class="lang-btn" data-lang="ml-IN" data-name="Malayalam" id="lang-ml">
+      <span class="lang-emoji">🅜</span>
+      <span class="lang-label">മലയാളം</span>
+    </button>
+    <button class="lang-btn" data-lang="en-IN" data-name="English" id="lang-en">
+      <span class="lang-emoji">🅔</span>
+      <span class="lang-label">English</span>
+    </button>
+  </div>
+
+  <!-- Category Quick Access -->
+  <div class="categories-grid">
+    <button class="category-card" data-category="farming" id="cat-farming">
+      <span class="cat-emoji">🌾</span>
+      <span class="cat-label">Farming</span>
+    </button>
+    <button class="category-card" data-category="health" id="cat-health">
+      <span class="cat-emoji">💊</span>
+      <span class="cat-label">Health</span>
+    </button>
+    <button class="category-card" data-category="government" id="cat-govt">
+      <span class="cat-emoji">🏛️</span>
+      <span class="cat-label">Schemes</span>
+    </button>
+    <button class="category-card" data-category="weather" id="cat-weather">
+      <span class="cat-emoji">🌦️</span>
+      <span class="cat-label">Weather</span>
+    </button>
+    <button class="category-card" data-category="market" id="cat-market">
+      <span class="cat-emoji">🛒</span>
+      <span class="cat-label">Market</span>
+    </button>
+    <button class="category-card" data-category="general" id="cat-general">
+      <span class="cat-emoji">💬</span>
+      <span class="cat-label">General</span>
+    </button>
+  </div>
+
+  <!-- AI Avatar -->
+  <div class="avatar-area">
+    <div class="avatar-float">
+      <div class="avatar-ring ring-1"></div>
+      <div class="avatar-ring ring-2"></div>
+      <div class="avatar-ring ring-3"></div>
+      <div class="avatar-core" id="avatar-core">
+        <span class="avatar-emoji">🤖</span>
+      </div>
+    </div>
+    <p class="avatar-prompt" id="avatar-prompt">నొక్కండి మాట్లాడండి</p>
+  </div>
+
+  <!-- Big Mic Button -->
+  <div class="mic-area">
+    <button class="mic-btn" id="mic-btn" aria-label="Tap to speak">
+      <div class="mic-pulse"></div>
+      <div class="mic-pulse delay-1"></div>
+      <svg class="mic-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="9" y="2" width="6" height="11" rx="3" fill="white"/>
+        <path d="M5 10C5 10 5 17 12 17C19 17 19 10 19 10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="17" x2="12" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <line x1="9" y1="21" x2="15" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="mic-label">మాట్లాడు</span>
+    </button>
+  </div>
+
+  <!-- Recent Conversations -->
+  <div class="recent-section" id="recent-section">
+    <div class="recent-title">📜 Recent</div>
+    <div class="recent-list" id="recent-list">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+</div>

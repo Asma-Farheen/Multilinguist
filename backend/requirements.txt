@@ -1,0 +1,14 @@
+# Grama AI Backend
+# FastAPI + Groq (Llama 3) + Whisper STT
+
+fastapi
+uvicorn[standard]
+httpx
+python-multipart
+python-dotenv
+groq
+aiofiles
+
+# Optional (for STT processing on backend directly)
+# openai-whisper
+# torch

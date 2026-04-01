@@ -1,0 +1,42 @@
+/* =========================================
+   COMPONENTS (Mic, Cards, Panels, Buttons)
+   ========================================= */
+
+/* --- Top Bar & Icons --- */
+.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 8px; position: sticky; top: 0; z-index: 20; }
+.icon-btn { width: 46px; height: 46px; border-radius: 50%; background: var(--surface2); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px var(--shadow-dark); border: 1.5px solid rgba(255,255,255,0.6); }
+.app-name-mini { font-size: 1.1rem; font-weight: 700; color: var(--primary); letter-spacing: 0.5px; }
+
+/* --- Mic Button --- */
+.mic-area { display: flex; justify-content: center; padding: 16px 20px; }
+.mic-btn { position: relative; width: 120px; height: 120px; border-radius: 50%; background: var(--gradient-btn); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 12px 40px var(--mic-glow), 0 4px 12px rgba(0,0,0,0.15); transition: all var(--transition); }
+.mic-btn.listening { background: linear-gradient(135deg, #E74C3C, #FF6B6B); }
+.mic-icon { width: 44px; height: 44px; position: relative; z-index: 2; }
+.mic-label { font-size: 0.7rem; font-weight: 700; color: white; letter-spacing: 0.5px; position: relative; z-index: 2; }
+
+/* --- Category Cards --- */
+.categories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 12px 20px; }
+.category-card { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 8px; border-radius: var(--radius-lg); background: var(--surface2); border: 1.5px solid rgba(255,255,255,0.7); box-shadow: 0 4px 20px var(--shadow); transition: all var(--transition); position: relative; overflow: hidden; }
+.category-card.active { background: var(--gradient-btn); }
+.cat-emoji { font-size: 2rem; position: relative; z-index: 1; }
+.cat-label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); position: relative; z-index: 1; }
+
+/* --- Language Strip --- */
+.language-strip { display: flex; gap: 10px; padding: 8px 20px; overflow-x: auto; scrollbar-width: none; }
+.lang-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 14px; border-radius: var(--radius-lg); background: var(--surface2); border: 2px solid transparent; min-width: 62px; flex-shrink: 0; box-shadow: 0 2px 12px var(--shadow); }
+.lang-btn.active { background: var(--gradient-btn); border-color: var(--primary-light); color: white; }
+
+/* --- Audio Controls --- */
+.audio-controls { display: flex; align-items: center; justify-content: center; gap: 16px; padding: 20px; position: sticky; bottom: 0; background: var(--gradient-bg); z-index: 25; }
+.audio-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 24px; border-radius: var(--radius-lg); background: var(--surface); box-shadow: 0 4px 20px var(--shadow); width: 100px; transition: transform 0.2s ease; }
+.audio-btn:active { transform: scale(0.95); }
+.audio-icon { font-size: 1.5rem; }
+.audio-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+
+/* --- Panels (Settings/History) --- */
+.panel { position: fixed; inset: 0; z-index: 200; visibility: hidden; }
+.panel.open { visibility: visible; }
+.panel-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); opacity: 0; transition: opacity 0.4s ease; }
+.panel.open .panel-overlay { opacity: 1; }
+.panel-sheet { position: absolute; left: 0; bottom: 0; width: 100%; max-width: 480px; left: 50%; transform: translateX(-50%) translateY(100%); background: var(--gradient-bg); border-radius: 36px 36px 0 0; padding: 24px 20px 40px; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); min-height: 50dvh; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
+.panel.open .panel-sheet { transform: translateX(-50%) translateY(0); }
