@@ -113,7 +113,14 @@ function bindEvents() {
       showToast(`Speech Speed: ${p}x`);
     });
   });
+
+  // Ask Again Button
+  if ($('new-question-btn')) {
+    $('new-question-btn').addEventListener('click', () => {
+      stopSpeaking();
+      showScreen('home');
+      setTimeout(startListening, 500);
+    });
+  }
 }
 
-// Kick Off Native App Engine
-document.addEventListener('DOMContentLoaded', init);
