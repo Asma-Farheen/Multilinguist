@@ -4,7 +4,7 @@
 // CONFIG & DATA (Server linking & App Data)
 // ============================================================
 const CONFIG = {
-  backendUrl: localStorage.getItem('gramaBackendUrl') || 'http://localhost:8000',
+  backendUrl: localStorage.getItem('gramaBackendUrl') || 'https://multilinguist.onrender.com',
   speechRate:  parseFloat(localStorage.getItem('gramaSpeechRate') || '1.0'),
   language:    localStorage.getItem('gramaLanguage') || 'te-IN',
   theme:       localStorage.getItem('gramaTheme') || 'warm',
