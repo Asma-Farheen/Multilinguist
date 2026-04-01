@@ -3,20 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="Grama AI - Voice-first AI assistant for rural India. Speak in ANY language and get answers about farming, health, and government schemes." />
+  <meta name="description" content="Grama AI - Voice-first AI assistant for rural India." />
   <meta name="theme-color" content="#FF6B2C" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><circle cx='96' cy='96' r='96' fill='%23FF6B2C'/><text y='.9em' font-size='120' x='50%25' text-anchor='middle' dy='0.1em'>🌿</text></svg>" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Grama AI - గ్రామ AI</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Noto+Sans+Telugu:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Tamil:wght@400;600;700&display=swap" rel="stylesheet" />
   
-  <!-- CSS Architecture Split -->
   <link rel="stylesheet" href="css/theme.css" />
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/components.css" />
@@ -25,18 +23,75 @@
 </head>
 <body>
 
-  <!-- Main Shell: Fragments will be injected here by loader.js -->
-  <div id="app-shell"></div>
+  <!-- Main Shell -->
+  <div id="app-shell" style="opacity: 0;"></div>
 
-  <!-- Divided Javascript Modules -->
+  <!-- Built-In Splash (Show while loading happens) -->
+  <div id="loading-overlay" style="position:fixed; inset:0; background:linear-gradient(160deg, #FF6B2C, #FFB347); z-index:999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; color:white; transition: opacity 0.5s ease;">
+    <div style="font-size: 5rem; animation: float 2s infinite;">🌿</div>
+    <div style="font-size: 2rem; font-weight: 800; letter-spacing: 1px;">Grama AI</div>
+    <div style="font-size: 0.9rem; opacity: 0.8;">Loading modules...</div>
+  </div>
+
+  <!-- Logic Layers -->
   <script src="js/config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
   
-  <!-- Dynamic Component Loader (Triggers Init) -->
-  <script src="js/loader.js"></script>
+  <script>
+    // Embedded Loader for maximum Speed and reliability
+    async function boot() {
+      const shell = document.getElementById('app-shell');
+      const loader = document.getElementById('loading-overlay');
+      const fragments = ['splash', 'home', 'listening', 'thinking', 'response', 'panels'];
+      
+      try {
+        console.log('🚀 Booting Grama AI...');
+        for (const f of fragments) {
+          const res = await fetch(`components/${f}.html`);
+          if (!res.ok) throw new Error(`Missing ${f}`);
+          const html = await res.text();
+          shell.insertAdjacentHTML('beforeend', html);
+        }
+        
+        // Setup Logic
+        if (typeof init === 'function') {
+          init();
+          console.log('✅ App Logic Loaded');
+        }
+        
+        // Hide Loader
+        setTimeout(() => {
+          loader.style.opacity = '0';
+          shell.style.opacity = '1';
+          setTimeout(() => loader.remove(), 500);
+        }, 1200);
+
+      } catch (err) {
+        console.error('Critical failure:', err);
+        loader.innerHTML = `
+          <div style="padding:40px; text-align:center;">
+             <p style="font-size:2rem;">⚠️</p>
+             <p>Failure loading components.</p>
+             <p style="font-size: 0.8rem; opacity:0.7;">${err.message}</p>
+             <button onclick="location.reload()" style="margin-top:20px; padding:10px 24px; border-radius:20px; border:none; background:white; color:#FF6B2C; font-weight:bold;">RETRY</button>
+          </div>
+        `;
+      }
+    }
+    window.addEventListener('load', boot);
+  </script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('✅ ServiceWorker Active'))
+        .catch(err => console.warn('❌ ServiceWorker Error', err));
+    }
+  </script>
 
 </body>
 </html>
