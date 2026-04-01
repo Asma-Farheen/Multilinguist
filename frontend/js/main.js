@@ -56,15 +56,21 @@ function bindEvents() {
   // Microphone Main Button
   const micBtn = $('mic-btn');
   if (micBtn) {
-    // We use a combination of events for maximum mobile/desktop compatibility
-    const start = (e) => { e.preventDefault(); startListening(); };
-    const stop = (e) => { e.preventDefault(); stopListening(); };
+    micBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (state.isListening) {
+        stopListening();
+      } else {
+        startListening();
+      }
+    });
 
-    micBtn.addEventListener('mousedown', start);
-    micBtn.addEventListener('touchstart', start, {passive: false});
-    micBtn.addEventListener('mouseup', stop);
-    micBtn.addEventListener('touchend', stop, {passive: false});
-    micBtn.addEventListener('mouseleave', stop);
+    // We also support holding for those who prefer it
+    let holdTimer;
+    micBtn.addEventListener('mousedown', () => {
+      holdTimer = setTimeout(() => { /* Maybe add some haptic here later */ }, 400);
+    });
+    micBtn.addEventListener('mouseup', () => clearTimeout(holdTimer));
   }
 
   // Back Buttons
