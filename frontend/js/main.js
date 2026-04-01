@@ -56,11 +56,15 @@ function bindEvents() {
   // Microphone Main Button
   const micBtn = $('mic-btn');
   if (micBtn) {
-    micBtn.addEventListener('mousedown', startListening);
-    micBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startListening(); }, {passive: false});
-    micBtn.addEventListener('mouseup', stopListening);
-    micBtn.addEventListener('mouseleave', Object); // Just in case
-    micBtn.addEventListener('touchend', (e) => { e.preventDefault(); stopListening(); }, {passive: false});
+    // We use a combination of events for maximum mobile/desktop compatibility
+    const start = (e) => { e.preventDefault(); startListening(); };
+    const stop = (e) => { e.preventDefault(); stopListening(); };
+
+    micBtn.addEventListener('mousedown', start);
+    micBtn.addEventListener('touchstart', start, {passive: false});
+    micBtn.addEventListener('mouseup', stop);
+    micBtn.addEventListener('touchend', stop, {passive: false});
+    micBtn.addEventListener('mouseleave', stop);
   }
 
   // Back Buttons
@@ -86,11 +90,12 @@ function bindEvents() {
   });
 
   // Category Toggles
-  document.querySelectorAll('.cat-btn').forEach(btn => {
+  document.querySelectorAll('.category-card').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.category-card').forEach(b => b.classList.remove('active'));
       e.currentTarget.classList.add('active');
-      state.currentCategory = e.currentTarget.dataset.cat;
+      state.currentCategory = e.currentTarget.dataset.category;
+      showToast(`Topic: ${state.currentCategory}`);
     });
   });
 
