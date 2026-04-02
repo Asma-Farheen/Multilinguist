@@ -19,6 +19,7 @@
   background: linear-gradient(to top, var(--gradient-bg), transparent);
   pointer-events: none; /* Let clicks pass through to child btn */
   z-index: 100;
+  transition: all 0.4s ease;
 }
 .mic-btn { 
   pointer-events: auto;

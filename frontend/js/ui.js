@@ -17,6 +17,22 @@ function showScreen(name) {
     if (next) {
       next.classList.add('active');
       state.currentScreen = name;
+      
+      // Manage Global Mic Visibility
+      const mic = document.querySelector('.mic-area');
+      if (mic) {
+        if (name === 'home' || name === 'listening') {
+          mic.style.display = 'flex';
+          setTimeout(() => mic.style.opacity = '1', 50);
+        } else {
+          mic.style.opacity = '0';
+          setTimeout(() => {
+            if (state.currentScreen !== 'home' && state.currentScreen !== 'listening') {
+              mic.style.display = 'none';
+            }
+          }, 400);
+        }
+      }
     }
   }, 100);
 }
