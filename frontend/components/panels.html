@@ -6,8 +6,10 @@
     <h2 class="panel-title">⚙️ Settings</h2>
     
     <div class="setting-row">
-      <span class="setting-icon">🔊</span>
-      <span class="setting-name">Speech Speed</span>
+      <div class="setting-header">
+        <span class="setting-icon">🔊</span>
+        <span class="setting-name">Speech Speed</span>
+      </div>
       <div class="speed-btns">
         <button class="speed-btn" data-speed="0.7">🐢 Slow</button>
         <button class="speed-btn active" data-speed="1.0">Normal</button>
@@ -16,14 +18,18 @@
     </div>
 
     <div class="setting-row">
-      <span class="setting-icon">🌐</span>
-      <span class="setting-name">Backend URL</span>
+      <div class="setting-header">
+        <span class="setting-icon">🌐</span>
+        <span class="setting-name">Backend URL</span>
+      </div>
       <input type="text" id="api-url" class="setting-input" placeholder="http://localhost:8000" />
     </div>
 
     <div class="setting-row">
-      <span class="setting-icon">🎨</span>
-      <span class="setting-name">Theme</span>
+      <div class="setting-header">
+        <span class="setting-icon">🎨</span>
+        <span class="setting-name">Theme</span>
+      </div>
       <div class="theme-btns">
         <button class="theme-btn active" data-theme="warm">🌅 Warm</button>
         <button class="theme-btn" data-theme="nature">🌿 Nature</button>
