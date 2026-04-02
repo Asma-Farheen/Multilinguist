@@ -38,34 +38,31 @@ To transcribe your voice without the internet, you need to install the Whisper l
 
 ---
 
-### **🚀 STEP 4: Start the System Locally**
+### **🚀 STEP 4: Start the System (One-Click!)**
+
+I have created two special "One-Click" files to make this incredibly easy for you:
 
 1.  **Start the Backend:**
-    ```bash
-    cd backend
-    python main.py
-    ```
-    *(It will start on http://localhost:8000)*
+    Go to the `backend` folder and **Double-Click** on: `RUN_BACKEND.bat`
+    *(It will handle all installations and start the server automatically!)*
 
 2.  **Start the Frontend:**
-    ```bash
-    cd frontend
-    python -m http.server 9999
-    ```
-    *(It will start on http://localhost:9999)*
+    Go to the `frontend` folder and **Double-Click** on: `RUN_FRONTEND.bat`
+    *(Your app will open in the browser instantly!)*
 
 ---
 
 ### **📱 STEP 5: Use it on your Phone (Offline Village Mode)**
 
 If you want to show it on a phone at the hackathon:
-1.  Connect your phone and laptop to the **same Wi-Fi router** (even if the router has no internet).
-2.  Find your **Laptop's IP Address** (e.g., `192.168.1.5`).
-3.  On your phone's browser, open: `http://192.168.1.5:9999`
-4.  Go to **⚙️ Settings** inside Grama AI on the phone.
-5.  Change **Backend URL** to: `http://192.168.1.5:8000`
-6.  **Success!** You now have a mini "Village Server" where everyone can talk to the AI 100% offline!
+1. Connect your phone and laptop to the **same Wi-Fi router** (even if the router has no internet).
+2. Find your **Laptop's IP Address** (e.g., `192.168.1.5`).
+3. On your phone's browser, open: `http://192.168.1.5:9999`
+4. Go to **⚙️ Settings** inside Grama AI on the phone.
+5. Change **Backend URL** to: `http://192.168.1.5:8000`
+6. **Success!** You now have a mini "Village Server" where everyone can talk to the AI 100% offline!
 
 ---
 
 **🌿 Grama AI — Empowering Villages, with or without Internet.** 🌿
+
