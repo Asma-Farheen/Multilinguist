@@ -24,9 +24,9 @@ async function processAudioBlob(audioBlob) {
     if (res.ok) {
       const data = await res.json();
       
-      // Auto-update UI to the language detected by the server
-      const detectedLang = data.language || state.currentLang;
-      applyLanguage(detectedLang);
+      // Auto-update UI to detected context
+      if (data.language) applyLanguage(data.language);
+      if (data.category) applyCategory(data.category);
       
       state.lastAnswer = data.answer;
       saveToHistory(data.question || "🎤 Audio input", data.answer, data.category);

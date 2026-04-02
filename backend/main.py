@@ -55,12 +55,12 @@ GROQ_API_URL   = "https://api.groq.com/openai/v1/chat/completions"
 # Language Prompts
 # ----------------------------------------------------------------
 LANGUAGE_PROMPTS = {
-    "te-IN": "You are Grama AI, a helpful assistant for rural users in India. Answer ONLY in Telugu language. Use very simple words. Maximum 3 short sentences. Be direct and practical.",
-    "hi-IN": "You are Grama AI, a helpful assistant for rural users in India. Answer ONLY in Hindi language. Use very simple words. Maximum 3 short sentences. Be direct and practical.",
-    "ta-IN": "You are Grama AI, a helpful assistant for rural users in India. Answer ONLY in Tamil language. Use very simple words. Maximum 3 short sentences. Be direct and practical.",
-    "kn-IN": "You are Grama AI, a helpful assistant for rural users in India. Answer ONLY in Kannada language. Use very simple words. Maximum 3 short sentences. Be direct and practical.",
-    "ml-IN": "You are Grama AI, a helpful assistant for rural users in India. Answer ONLY in Malayalam language. Use very simple words. Maximum 3 short sentences. Be direct and practical.",
-    "en-IN": "You are Grama AI, a helpful assistant for rural users in India. Answer in simple English. Maximum 3 short sentences. Be direct and practical.",
+    "te-IN": "You are Grama AI, a certified expert in Indian agriculture, rural healthcare, and government schemes. Answer ONLY in Telugu (తెలుగు). Provide practical, expert advice. Maximum 3 short, easy-to-follow sentences.",
+    "hi-IN": "You are Grama AI, a certified expert in Indian agriculture, rural healthcare, and government schemes. Answer ONLY in Hindi (हिंदी). Provide practical, expert advice. Maximum 3 short, easy-to-follow sentences.",
+    "ta-IN": "You are Grama AI, a certified expert in Indian agriculture, rural healthcare, and government schemes. Answer ONLY in Tamil (தமிழ்). Provide practical, expert advice. Maximum 3 short, easy-to-follow sentences.",
+    "kn-IN": "You are Grama AI, a certified expert in Indian agriculture, rural healthcare, and government schemes. Answer ONLY in Kannada (ಕನ್ನಡ). Provide practical, expert advice. Maximum 3 short, easy-to-follow sentences.",
+    "ml-IN": "You are Grama AI, a certified expert in Indian agriculture, rural healthcare, and government schemes. Answer ONLY in Malayalam (മലയാളം). Provide practical, expert advice. Maximum 3 short, easy-to-follow sentences.",
+    "en-IN": "You are Grama AI, a certified expert in Indian agriculture, rural healthcare, and government schemes. Answer in simple, direct English. Provide practical, expert advice. Maximum 3 short sentences.",
 }
 
 CATEGORY_HINTS = {
@@ -203,16 +203,29 @@ async def voice_chat(
     if not question.strip():
         return {"question": "", "answer": "No speech detected", "language": "en-IN"}
 
-    # Step 2: Get AI answer + language auto-detection
-    sys_prompt = "You are Grama AI for rural India. Detect the language of the user's input. Answer the question natively in the EXACT same language (e.g. if Telugu, write Telugu script). Keep it to 2 simple sentences. Return ONLY valid JSON: {\"answer\": \"your answer\", \"lang_code\": \"te-IN/hi-IN/ta-IN/kn-IN/ml-IN/en-IN/etc\"}"
+    # Step 2: Get AI answer + context detection (Special Feature)
+    sys_prompt = """
+    You are Grama AI, an expert for rural India.
+    1. Detect the user's intent/topic: farming, health, government, weather, market, or general.
+    2. Detect the language natively.
+    3. Provide expert, practical advice in THAT language.
+    4. Keep it to 2-3 short, clear sentences.
+    
+    Return ONLY valid JSON:
+    {
+      "answer": "your practical expert advice",
+      "lang_code": "te-IN / hi-IN / ta-IN / etc",
+      "category": "farming / health / government / weather / market / general"
+    }
+    """
     
     response_json = await call_groq_json(question, sys_prompt)
 
     return {
         "question": question,
-        "answer":   response_json.get("answer", response_json.get("response", "Error")),
+        "answer":   response_json.get("answer", "Error processing response"),
         "language": response_json.get("lang_code", language),
-        "category": category,
+        "category": response_json.get("category", category),
         "model":    GROQ_MODEL,
     }
 
@@ -305,7 +318,10 @@ async def transcribe_groq(audio_path: str) -> str:
         async with httpx.AsyncClient(timeout=30) as client:
             with open(audio_path, "rb") as f:
                 files = {"file": ("audio.webm", f, "audio/webm")}
-                data = {"model": "whisper-large-v3"}
+                data = {
+                    "model": "whisper-large-v3",
+                    "prompt": "Grama AI, Farming, Health, Mandi Price, PM-Kisan, Indian village, Rural agriculture."
+                }
                 res = await client.post(url, headers=headers, files=files, data=data)
                 res.raise_for_status()
                 return res.json().get("text", "").strip()

@@ -107,6 +107,13 @@ function applySpeed(speed) {
   });
 }
 
+function applyCategory(cat) {
+  state.currentCategory = cat;
+  document.querySelectorAll('.category-card').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.category === cat);
+  });
+}
+
 // ------------------------------------------------------------
 // HISTORY RENDERING
 // ------------------------------------------------------------
