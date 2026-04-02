@@ -6,11 +6,24 @@
 
 let mediaRecorder;
 let audioChunks = [];
+let audioContext;
+let analyser;
+let silenceTimer;
+const SILENCE_THRESHOLD = 15; // Adjustment for sensitivity
+const SILENCE_DURATION = 2000; // 2 seconds of silence to auto-stop
 
 async function startListening() {
   stopSpeaking();
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    // Set up Silence Detection
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioContext.createMediaStreamSource(stream);
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 256;
+    source.connect(analyser);
+    
     mediaRecorder = new MediaRecorder(stream);
     audioChunks = [];
 
@@ -21,6 +34,8 @@ async function startListening() {
     mediaRecorder.onstop = async () => {
       const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
       processAudioBlob(audioBlob);
+      // Clean up audio context
+      if (audioContext) audioContext.close();
     };
 
     mediaRecorder.start();
@@ -30,6 +45,10 @@ async function startListening() {
     if ($('listening-text')) $('listening-text').textContent = LANG_DATA[state.currentLang]?.listening || 'Listening...';
     
     showScreen('listening');
+    
+    // Start monitoring for silence
+    monitorSilence();
+    
   } catch (err) {
     console.error('Mic capture error:', err.message);
     showToast('🎤 Error: Microphone permission denied or unavailable.');
@@ -38,12 +57,40 @@ async function startListening() {
   }
 }
 
+function monitorSilence() {
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  let lastSpeakTime = Date.now();
+
+  const check = () => {
+    if (!state.isListening) return;
+
+    analyser.getByteFrequencyData(dataArray);
+    let sum = 0;
+    for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+    let average = sum / bufferLength;
+
+    if (average > SILENCE_THRESHOLD) {
+      lastSpeakTime = Date.now();
+    } else {
+      if (Date.now() - lastSpeakTime > SILENCE_DURATION) {
+        console.log("🤫 Silence detected, auto-stopping...");
+        stopListening();
+        return;
+      }
+    }
+    requestAnimationFrame(check);
+  };
+  requestAnimationFrame(check);
+}
+
 function stopListening() {
   if (mediaRecorder && mediaRecorder.state === 'recording') {
     mediaRecorder.stop();
   }
   state.isListening = false;
-  $('mic-btn').classList.remove('listening');
+  const mic = $('mic-btn');
+  if (mic) mic.classList.remove('listening');
 }
 
 // ------------------------------------------------------------
