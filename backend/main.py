@@ -13,9 +13,10 @@ from typing import Optional
 import json
 import httpx
 import aiofiles
+from gtts import gTTS
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse, Response
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -360,6 +361,30 @@ def get_fallback_response(question: str, language: str) -> str:
     else:
         return "I am Grama AI. I can help with farming, health, and government schemes. Please ask your question."
 
+
+@app.get("/api/tts")
+async def text_to_speech(text: str, lang: str = "te-IN"):
+    """
+    Backend TTS fallback using gTTS.
+    """
+    try:
+        # BCP47 to gtts code
+        map_code = {
+            "te-IN": "te", "hi-IN": "hi", "ta-IN": "ta", "kn-IN": "kn", "ml-IN": "ml", "en-IN": "en"
+        }
+        g_lang = map_code.get(lang, "en")
+        
+        tts = gTTS(text=text, lang=g_lang)
+        
+        # Save to memory
+        buf = io.BytesIO()
+        tts.write_to_fp(buf)
+        buf.seek(0)
+        
+        return Response(content=buf.read(), media_type="audio/mpeg")
+    except Exception as e:
+        log.error("TTS Error: %s", e)
+        raise HTTPException(status_code=500, detail="Voice synthesis failed")
 
 # ----------------------------------------------------------------
 # RUN (development)

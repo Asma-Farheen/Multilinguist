@@ -1,7 +1,7 @@
 'use strict';
 
 // ============================================================
-// AUDIO & SPEECH (Microphone & Text-To-Speech bot voices)
+// AUDIO & SPEECH (Microphone & Multilingual High-Quality TTS)
 // ============================================================
 
 let mediaRecorder;
@@ -14,29 +14,21 @@ async function startListening() {
     mediaRecorder = new MediaRecorder(stream);
     audioChunks = [];
 
-    // Collect chunks of audio as the user speaks
     mediaRecorder.ondataavailable = (e) => {
       if (e.data.size > 0) audioChunks.push(e.data);
     };
 
-    // When the user stops talking, we package the audio
     mediaRecorder.onstop = async () => {
       const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      
-      // We pass it to the server (func defined in api.js)
       processAudioBlob(audioBlob);
     };
 
     mediaRecorder.start();
     state.isListening = true;
     
-    const mic = $('mic-btn');
-    if (mic) mic.classList.add('listening');
+    if ($('mic-btn')) $('mic-btn').classList.add('listening');
+    if ($('listening-text')) $('listening-text').textContent = LANG_DATA[state.currentLang]?.listening || 'Listening...';
     
-    const listenText = $('listening-text');
-    if (listenText) listenText.textContent = LANG_DATA[state.currentLang]?.listening || 'Listening...';
-    
-    // UI Change
     showScreen('listening');
   } catch (err) {
     console.error('Mic capture error:', err.message);
@@ -55,77 +47,91 @@ function stopListening() {
 }
 
 // ------------------------------------------------------------
-// TEXT-TO-SPEECH (Bot Talking Back)
+// HIGH-FIDELITY TEXT-TO-SPEECH (Grama AI Voice)
 // ------------------------------------------------------------
 
 function loadVoices() {
-  state.voices = state.synth.getVoices();
-  if (!state.voices.length) {
-    state.synth.onvoiceschanged = () => {
-      state.voices = state.synth.getVoices();
-    };
-  }
+  // Only used for Local Fallback
+  if (state.synth) state.synth.getVoices();
 }
 
-function getBestVoice(langCode) {
-  const voices = state.synth.getVoices(); // Refresh voices list
-  if (!voices.length) return null;
+/**
+ * Modern High-Quality TTS with Backend Streaming Fallback.
+ * This guarantees the user HEARS the bot even if their phone has no voice packs.
+ */
+async function speakText(text) {
+  if (!text) return;
+  stopSpeaking();
 
-  // 1. Exact match (e.g. te-IN)
-  let v = voices.find(v => v.lang === langCode);
-  if (v) return v;
+  console.log(`🗣️ Speaking (${state.currentLang}): ${text.substring(0, 50)}...`);
 
-  // 2. Exact match with underscore (e.g. te_IN)
-  const underscoreLang = langCode.replace('-', '_');
-  v = voices.find(v => v.lang === underscoreLang);
-  if (v) return v;
-
-  // 3. Prefix match (e.g. te)
-  const prefix = langCode.split('-')[0];
-  v = voices.find(v => v.lang.startsWith(prefix));
-  if (v) return v;
-
-  // 4. Fuzzy name match for India locales
-  const searchStr = langCode.substring(0, 2).toLowerCase();
-  v = voices.find(v => v.name.toLowerCase().includes(searchStr) && (v.name.includes('India') || v.lang.includes('IN')));
+  // Target: High-quality backend stream (Fast, multi-language, accurate)
+  const ttsUrl = `${CONFIG.backendUrl}/api/tts?text=${encodeURIComponent(text)}&lang=${state.currentLang}`;
   
-  return v || null;
+  const audio = new Audio(ttsUrl);
+  state.currentAudio = audio; 
+  
+  audio.onplay = () => {
+    state.isSpeaking = true;
+    const indicator = $('speaking-indicator');
+    if (indicator) indicator.classList.add('visible');
+  };
+  
+  audio.onended = () => resetSpeakingState();
+  audio.onerror = (e) => {
+    console.warn("Backend TTS failed/offline, switching to browser local voice.");
+    speakTextLocal(text);
+  };
+
+  audio.play().catch(err => {
+    console.warn("Interaction required or playback failed", err);
+    speakTextLocal(text);
+  });
 }
 
-function speakText(text) {
+/**
+ * Local Web Speech API Fallback (Standard Browser Quality)
+ */
+function speakTextLocal(text) {
   if (!state.synth) return;
-  stopSpeaking(); // Stop anything currently talking
-
+  
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = state.currentLang;
   utterance.rate = state.speechRate;
 
-  const voice = getBestVoice(state.currentLang);
-  if (voice) utterance.voice = voice;
+  // Try to find a half-decent local voice
+  const voices = state.synth.getVoices();
+  let v = voices.find(v => v.lang === state.currentLang);
+  if (!v) v = voices.find(v => v.lang.startsWith(state.currentLang.split('-')[0]));
+  if (v) utterance.voice = v;
 
   utterance.onstart = () => {
     state.isSpeaking = true;
-    $('speaking-indicator').classList.add('visible');
+    const indicator = $('speaking-indicator');
+    if (indicator) indicator.classList.add('visible');
   };
-
-  utterance.onend = () => {
-    state.isSpeaking = false;
-    $('speaking-indicator').classList.remove('visible');
-  };
-
-  utterance.onerror = () => {
-    state.isSpeaking = false;
-    $('speaking-indicator').classList.remove('visible');
-  };
+  utterance.onend = () => resetSpeakingState();
+  utterance.onerror = () => resetSpeakingState();
 
   state.synth.speak(utterance);
 }
 
-function stopSpeaking() {
-  if (state.synth && state.synth.speaking) {
-    state.synth.cancel();
-  }
+function resetSpeakingState() {
   state.isSpeaking = false;
   const indicator = $('speaking-indicator');
   if (indicator) indicator.classList.remove('visible');
+  state.currentAudio = null;
+}
+
+function stopSpeaking() {
+  // Stop backend audio if playing
+  if (state.currentAudio) {
+    state.currentAudio.pause();
+    state.currentAudio = null;
+  }
+  // Stop local synthesis if playing
+  if (state.synth && state.synth.speaking) {
+    state.synth.cancel();
+  }
+  resetSpeakingState();
 }
