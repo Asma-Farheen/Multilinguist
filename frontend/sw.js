@@ -2,7 +2,7 @@
 // GRAMA AI - Service Worker (Offline Support)
 // ============================================================
 
-const CACHE_NAME = 'grama-ai-v3';
+const CACHE_NAME = 'grama-ai-v500';
 const STATIC_ASSETS = [
   './',
   './index.html',

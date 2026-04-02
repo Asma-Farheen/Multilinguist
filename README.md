@@ -60,6 +60,14 @@ The frontend works **stand-alone** without a backend using the built-in browser 
 
 ---
 
+### Option C — 🚀 100% Offline Hackathon Mode (No Internet Required!)
+
+You can run the **entire system 100% offline** on your laptop using local AI models (Ollama for LLM and Whisper for STT). This is perfect for showing the judges even if the venue has no internet!
+
+👉 **[View the Step-by-Step Offline Guide](HACKATHON-OFFLINE-GUIDE.md)**
+
+---
+
 ### Option B — Full Stack (With Groq AI Backend)
 
 #### Step 1 — Get a Free Groq API Key
