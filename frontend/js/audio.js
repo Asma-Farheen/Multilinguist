@@ -68,11 +68,27 @@ function loadVoices() {
 }
 
 function getBestVoice(langCode) {
-  const voices = state.voices;
+  const voices = state.synth.getVoices(); // Refresh voices list
+  if (!voices.length) return null;
+
+  // 1. Exact match (e.g. te-IN)
   let v = voices.find(v => v.lang === langCode);
   if (v) return v;
+
+  // 2. Exact match with underscore (e.g. te_IN)
+  const underscoreLang = langCode.replace('-', '_');
+  v = voices.find(v => v.lang === underscoreLang);
+  if (v) return v;
+
+  // 3. Prefix match (e.g. te)
   const prefix = langCode.split('-')[0];
   v = voices.find(v => v.lang.startsWith(prefix));
+  if (v) return v;
+
+  // 4. Fuzzy name match for India locales
+  const searchStr = langCode.substring(0, 2).toLowerCase();
+  v = voices.find(v => v.name.toLowerCase().includes(searchStr) && (v.name.includes('India') || v.lang.includes('IN')));
+  
   return v || null;
 }
 
