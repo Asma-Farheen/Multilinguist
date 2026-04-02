@@ -67,12 +67,26 @@ function bindGlobalEvents() {
       setTimeout(startListening, 600);
     }
 
-    // 6. Theme & Speed
+    // 6. Theme & Speed Selectors
+    const themeBtn = e.target.closest('.theme-btn');
+    if (themeBtn) {
+      applyTheme(themeBtn.dataset.theme);
+      showToast(`Theme: ${themeBtn.dataset.theme}`);
+      return;
+    }
+
+    const speedBtn = e.target.closest('.speed-btn');
+    if (speedBtn) {
+      const p = parseFloat(speedBtn.dataset.speed);
+      applySpeed(p);
+      showToast(`Speed: ${p}x`);
+      return;
+    }
+
     if (e.target.closest('#theme-cycle')) {
       const themes = ['warm', 'nature', 'sky'];
       let idx = themes.indexOf(state.currentTheme || 'warm');
       let next = themes[(idx + 1) % themes.length];
-      state.currentTheme = next;
       applyTheme(next);
       showToast(`Theme: ${next}`);
     }
